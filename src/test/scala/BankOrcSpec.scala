@@ -8,44 +8,30 @@ class BankOrcSpec extends org.scalatest.FunSuite {
     text
   }
 
-  val one = "     |  |"
-  val two = " _  _||_ "
-
   def bankOcr(text: String): String = {
-
-    println("Text: \n" + text)
-
-    val blockedLines: Array[Array[String]] =
-      text
-        .split("\n")
-        .map((line: String) => line.grouped(3).map(group => group.mkString).toArray)
-        .toArray
-
-    println("0:" + blockedLines(0).mkString(","))
-    println("1:" + blockedLines(1).mkString(","))
-    println("2:" + blockedLines(2).mkString(","))
-
-    //    println("***" + blockedLines.map(x => x).mkString(""))
-
-    println(blockedLines(0)
-      .zip(blockedLines(1))
-      .zip(blockedLines(2).map(a => a))
+    val numbers = Map(
+      "     |  |" -> "1",
+      " _  _||_ " -> "2",
+      " _  _| _|" -> "3",
+      "   |_|  |" -> "4",
+      " _ |_  _|" -> "5",
+      " _ |_ |_|" -> "6",
+      " _   |  |" -> "7",
+      " _ |_||_|" -> "8",
+      " _ |_| _|" -> "9"
     )
 
-    val strings: Array[String] =
-      blockedLines(0)
-        .zip(blockedLines(1))
-        .zip(blockedLines(2))
-        .map({ case ((a: String, b: String), c: String) => a + b + c })
-        .toArray
+    val blockedLines =
+      text
+        .split(System.lineSeparator())
+        .map((line: String) => line.grouped(3).map(group => group.mkString))
 
-    strings.map(block => {
-      block match {
-        case x if x == one => "1"
-        case x if x == two => "2"
-        case x => throw new RuntimeException(s"Unknown block: [$x]")
-      }
-    }).mkString("")
+    blockedLines(0)
+      .zip(blockedLines(1))
+      .zip(blockedLines(2))
+      .map({ case ((blockLine1: String, blockLine2: String), blockLine3: String) => blockLine1 + blockLine2 + blockLine3 })
+      .map(number => numbers(number))
+      .mkString
   }
 
   test("Parse a 1") {
@@ -65,11 +51,16 @@ class BankOrcSpec extends org.scalatest.FunSuite {
 
     assert(bankOcr(text) === "1111")
   }
+  test("Parse 123456789") {
+    val text = loadFile("123456789")
 
-
-  test("Parse Test") {
-    val text = loadFile("text")
-
-    assert(bankOcr(text) === "1")
+    assert(bankOcr(text) === "123456789")
   }
+
+
+  //  test("Parse Test") {
+  //    val text = loadFile("text")
+  //
+  //    assert(bankOcr(text) === "1")
+  //  }
 }
