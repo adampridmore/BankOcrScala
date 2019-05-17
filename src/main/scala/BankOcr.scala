@@ -3,51 +3,50 @@ object BankOcr {
     val blockedLines =
       text
         .split(System.lineSeparator())
-        .map((line: String) => line.grouped(3).map(group => group.mkString))
+        .map((line: String) => line.grouped(3).map(group => group.mkString).toSeq)
 
-    blockedLines(0)
-      .zip(blockedLines(1))
-      .zip(blockedLines(2))
-      .map({ case ((blockLine1: String, blockLine2: String), blockLine3: String) => blockLine1 + blockLine2 + blockLine3 })
+    (blockedLines(0), blockedLines(1), blockedLines(2))
+      .zipped
+      .map({ case (a: String, b: String, c: String) => a + b + c })
       .map(numberBlock => numbers(numberBlock))
       .mkString
   }
 
   private val numbers = Map(
     "   " +
-    "  |" +
-    "  |" -> "1",
-
-    " _ "+
-    " _|"+
-    "|_ " -> "2",
+      "  |" +
+      "  |" -> "1",
 
     " _ " +
-    " _|" +
-    " _|" -> "3",
+      " _|" +
+      "|_ " -> "2",
 
-    "   "+
-    "|_|"+
-    "  |" -> "4",
+    " _ " +
+      " _|" +
+      " _|" -> "3",
 
-    " _ "+
-    "|_ "+
-    " _|" -> "5",
+    "   " +
+      "|_|" +
+      "  |" -> "4",
 
-    " _ "+
-    "|_ "+
-    "|_|" -> "6",
+    " _ " +
+      "|_ " +
+      " _|" -> "5",
 
-    " _ "+
-    "  |"+
-    "  |" -> "7",
+    " _ " +
+      "|_ " +
+      "|_|" -> "6",
 
-    " _ "+
-    "|_|"+
-    "|_|" -> "8",
+    " _ " +
+      "  |" +
+      "  |" -> "7",
 
-    " _ "+
-    "|_|"+
-    " _|" -> "9"
+    " _ " +
+      "|_|" +
+      "|_|" -> "8",
+
+    " _ " +
+      "|_|" +
+      " _|" -> "9"
   )
 }
