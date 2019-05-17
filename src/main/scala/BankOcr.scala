@@ -7,7 +7,7 @@ object BankOcr {
 
     (blockedLines(0), blockedLines(1), blockedLines(2))
       .zipped
-      .map({ case (a: String, b: String, c: String) => a + b + c })
+      .map({case a => a.productIterator.mkString})
       .map(numberBlock => numbers(numberBlock))
       .mkString
   }
