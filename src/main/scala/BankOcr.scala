@@ -12,6 +12,19 @@ object BankOcr {
       .mkString
   }
 
+  def isValidNumber(text: String): Boolean = {
+    //    (d1+2*d2+3*d3 +..+9*d9) mod 11 = 0
+
+    val total = text.toCharArray
+          .reverse
+          .zipWithIndex
+          .map((digit, index) => ( digit.toString.toInt .toInt, index))
+          .map((digit,index) => digit * (index+1))
+          .sum
+
+    (total % 11) == 0
+  }
+
   private val numbers = Map(
     "   " +
     "  |" +

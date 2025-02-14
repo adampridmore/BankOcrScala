@@ -1,4 +1,5 @@
 import BankOcr.bankOcrParse
+import BankOcr.isValidNumber
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.io.Source
@@ -34,6 +35,15 @@ class BankOrcSpec extends AnyWordSpec {
       val text = loadFile("123456789")
 
       assert(bankOcrParse(text) === "123456789")
+    }
+  }
+
+  "Use case 2" can {
+    "for a valid number" in {
+      assert(isValidNumber("345882865") === true)
+    }
+    "for an invalid number" in {
+      assert(isValidNumber("111111111") === false)
     }
   }
 }
