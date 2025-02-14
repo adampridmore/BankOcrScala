@@ -1,8 +1,9 @@
 import BankOcr.bankOcrParse
+import org.scalatest.funsuite.AnyFunSuite
 
 import scala.io.Source
 
-class BankOrcSpec extends org.scalatest.FunSuite {
+class BankOrcSpec extends AnyFunSuite {
   private def loadFile(filename: String) = {
     val source = Source.fromFile(filename)
     val text = source.getLines.mkString("\n")
