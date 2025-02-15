@@ -35,6 +35,12 @@ class BankOrcSpec extends AnyWordSpec {
 
       assert(bankOcrParse(text) === AccountNumber("123456789"))
     }
+
+    "Parse a 0" in {
+      val text = loadFile("zero")
+
+      assert(bankOcrParse(text) === AccountNumber("0"))
+    }
   }
 
   "Use case 2" can {
