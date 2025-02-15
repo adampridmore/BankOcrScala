@@ -1,21 +1,26 @@
 object BankOcr {
-  def bankOcrParse(text: String): String = {
+
+  case class AccountNumber(digits: String)
+
+  class ReportLine(val value: String) extends AnyVal
+
+  def bankOcrParse(textToOcr: String): AccountNumber = {
     val blockedLines =
-      text
+      textToOcr
         .split(System.lineSeparator())
         .map((line: String) => line.grouped(3).map(group => group.mkString).toSeq)
 
-    (blockedLines(0), blockedLines(1), blockedLines(2))
+    AccountNumber((blockedLines(0), blockedLines(1), blockedLines(2))
       .zipped
       .map({case a => a.productIterator.mkString})
       .map(numberBlock => numbers(numberBlock))
-      .mkString
+      .mkString)
   }
 
-  def isValidNumber(accountNumber: String): Boolean = {
+  def isValidNumber(accountNumber: AccountNumber): Boolean = {
     //    (d1+2*d2+3*d3 +..+9*d9) mod 11 = 0
 
-    val total = accountNumber.toCharArray
+    val total = accountNumber.digits.toCharArray
           .reverse
           .zipWithIndex
           .map((digit, index) => ( digit.toString.toInt .toInt, index))
@@ -25,13 +30,13 @@ object BankOcr {
     (total % 11) == 0
   }
 
-  def report(accountNumber: String) : String = {
-    if (accountNumber.contains("?")){
-      accountNumber + " ILL"
+  def report(accountNumber: AccountNumber) : ReportLine = {
+    if (accountNumber.digits.contains("?")){
+      ReportLine(accountNumber.digits + " ILL")
     } else if (!isValidNumber(accountNumber)){
-      accountNumber + " ERR"
+      ReportLine(accountNumber.digits + " ERR")
     } else {
-      accountNumber
+      ReportLine(accountNumber.digits)
     }
   }
 
