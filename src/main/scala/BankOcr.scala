@@ -37,7 +37,7 @@ object AccountNumber {
         .lazyZip(blockedLines(1))
         .lazyZip(blockedLines(2))
         .map((a, b, c) => s"$a$b$c")
-        .map(numbers)
+        .map(text => numbers.getOrElse(text, "?"))
         .mkString
     )
   }

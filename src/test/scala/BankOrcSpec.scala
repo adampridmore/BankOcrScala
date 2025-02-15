@@ -64,5 +64,11 @@ class BankOrcSpec extends AnyWordSpec {
     "Illegal number" in {
       assert(AccountNumber("86110??36").report === ReportLine("86110??36 ILL"))
     }
+
+    "Illegal OCR scan" in {
+      val text = loadFile("illegal")
+
+      assert(bankOcrParse(text).report ===  ReportLine("49006771? ILL"))
+    }
   }
 }
