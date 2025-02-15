@@ -1,8 +1,30 @@
-object BankOcr {
+class ReportLine(val value: String) extends AnyVal
 
-  case class AccountNumber(digits: String)
+case class AccountNumber(digits: String) {
+  def isValidNumber: Boolean = {
+    //    (d1+2*d2+3*d3 +..+9*d9) mod 11 = 0
 
-  class ReportLine(val value: String) extends AnyVal
+    val total = digits.toCharArray.reverse
+      .zipWithIndex
+      .map((digit, index) => (digit.toString.toInt, index))
+      .map((digit, index) => digit * (index + 1))
+      .sum
+
+    (total % 11) == 0
+  }
+
+  def report: ReportLine = {
+    if (digits.contains("?")) {
+      ReportLine(digits + " ILL")
+    } else if (!isValidNumber) {
+      ReportLine(digits + " ERR")
+    } else {
+      ReportLine(digits)
+    }
+  }
+}
+
+object AccountNumber {
 
   def bankOcrParse(textToOcr: String): AccountNumber = {
     val blockedLines =
@@ -10,34 +32,14 @@ object BankOcr {
         .split(System.lineSeparator())
         .map((line: String) => line.grouped(3).map(group => group.mkString).toSeq)
 
-    AccountNumber((blockedLines(0), blockedLines(1), blockedLines(2))
-      .zipped
-      .map({case a => a.productIterator.mkString})
-      .map(numberBlock => numbers(numberBlock))
-      .mkString)
-  }
-
-  def isValidNumber(accountNumber: AccountNumber): Boolean = {
-    //    (d1+2*d2+3*d3 +..+9*d9) mod 11 = 0
-
-    val total = accountNumber.digits.toCharArray
-          .reverse
-          .zipWithIndex
-          .map((digit, index) => ( digit.toString.toInt .toInt, index))
-          .map((digit,index) => digit * (index+1))
-          .sum
-
-    (total % 11) == 0
-  }
-
-  def report(accountNumber: AccountNumber) : ReportLine = {
-    if (accountNumber.digits.contains("?")){
-      ReportLine(accountNumber.digits + " ILL")
-    } else if (!isValidNumber(accountNumber)){
-      ReportLine(accountNumber.digits + " ERR")
-    } else {
-      ReportLine(accountNumber.digits)
-    }
+    AccountNumber(
+      blockedLines(0)
+        .lazyZip(blockedLines(1))
+        .lazyZip(blockedLines(2))
+        .map((a, b, c) => s"$a$b$c")
+        .map(numbers)
+        .mkString
+    )
   }
 
   private val numbers = Map(
