@@ -12,10 +12,10 @@ object BankOcr {
       .mkString
   }
 
-  def isValidNumber(text: String): Boolean = {
+  def isValidNumber(accountNumber: String): Boolean = {
     //    (d1+2*d2+3*d3 +..+9*d9) mod 11 = 0
 
-    val total = text.toCharArray
+    val total = accountNumber.toCharArray
           .reverse
           .zipWithIndex
           .map((digit, index) => ( digit.toString.toInt .toInt, index))
@@ -23,6 +23,16 @@ object BankOcr {
           .sum
 
     (total % 11) == 0
+  }
+
+  def report(accountNumber: String) : String = {
+    if (accountNumber.contains("?")){
+      accountNumber + " ILL"
+    } else if (!isValidNumber(accountNumber)){
+      accountNumber + " ERR"
+    } else {
+      accountNumber
+    }
   }
 
   private val numbers = Map(

@@ -1,5 +1,4 @@
-import BankOcr.bankOcrParse
-import BankOcr.isValidNumber
+import BankOcr.{bankOcrParse, isValidNumber, report}
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.io.Source
@@ -44,6 +43,20 @@ class BankOrcSpec extends AnyWordSpec {
     }
     "for an invalid number" in {
       assert(isValidNumber("111111111") === false)
+    }
+  }
+
+  "User case 3" can {
+    "valid number" in {
+      assert(report("345882865") === "345882865")
+    }
+
+    "error number" in {
+      assert(report("664371495") === "664371495 ERR")
+    }
+
+    "Illegal number" in {
+      assert(report("86110??36") === "86110??36 ILL")
     }
   }
 }
